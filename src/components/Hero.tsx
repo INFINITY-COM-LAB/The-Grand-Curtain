@@ -1,4 +1,16 @@
-import { ChevronDown } from "lucide-react";
+
+        You are an expert React and TypeScript developer.
+
+        Improve this code while keeping the same functionality.
+
+        Code:
+            
+        You are an expert React and TypeScript developer.
+
+        Improve this code while keeping the same functionality.
+
+        Code:
+            import { ChevronDown } from "lucide-react";
 
 export function Hero() {
   return (
@@ -112,3 +124,46 @@ export function Hero() {
     </section>
   );
 }
+
+        `,
+        solution: `
+        Here is the improved version of the code:
+
+        \`\`\`javascript
+        import { ChevronDown } from "lucide-react";
+
+        export function Hero() {
+            const stats = [
+                { value: "127", label: "Years of Legacy" },
+                { value: "50+", label: "Shows per Season" },
+                { value: "98%", label: "Audience Satisfaction" },
+            ];
+
+            return (
+                <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-black via-[#1a0a0a] to-[#0d0d0d]" />
+                    <div className
+        `,
+      },
+    ],
+    docs: [],
+  },
+  {
+    id: 2,
+    title: "Write a function to generate a random string",
+    prompt: `
+    Write a function in JavaScript that generates a random alphanumeric string. The length of the string should be 6 characters long. Ensure that the function uses Math.random() for generating the random string.
+
+    Code:
+    function generateRandomString() {
+      // Your code here
+    }
+    `,
+    examples: [
+      {
+        code: `
+        function generateRandomString() {
+            let result = '';
+            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+            for (let i = 
