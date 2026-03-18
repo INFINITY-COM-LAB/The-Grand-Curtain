@@ -1,98 +1,136 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X, Theater } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { smoothScrollToSection, getActiveSectionId } from "@/utils/smoothScroll";
 
 const navLinks = [
   { label: "Now Showing", href: "#now-showing" },
   { label: "Upcoming", href: "#upcoming" },
   { label: "About", href: "#about" },
   { label: "Reviews", href: "#reviews" },
+  { label: "Newsletter", href: "#newsletter" },
   { label: "Contact", href: "#contact" },
 ];
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Efficient scroll listener with throttling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        setActiveSection(getActiveSectionId());
+      }, 50);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
+
+  const handleNavClick = (href: string) => {
+    const sectionId = href.replace("#", "");
+    smoothScrollToSection(sectionId);
+    setIsOpen(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setIsOpen(false);
+    }
+  };
+
+  const handleResize = () => {
+    if (window.innerWidth >= 768) {
+      setIsOpen(false);
+    }
+  };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <nav
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        scrolled
-          ? "bg-black/90 backdrop-blur-md shadow-lg shadow-black/30"
-          : "bg-transparent"
-      )}
+      className="fixed top-10 sm:top-10 left-0 right-0 z-50 px-4 sm:px-6"
+      aria-label="Main navigation"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-3 group">
-          <Theater className="h-8 w-8 text-amber-400 group-hover:text-amber-300 transition-colors" />
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-wide text-white font-serif">
-              The Grand Curtain
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-amber-400/80">
-              Theatre & Arts
-            </span>
+      <div className="mx-auto max-w-7xl">
+        <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/40 px-6 py-4 backdrop-blur-xl">
+          {/* Logo */}
+          <div className="flex items-center gap-2 font-serif font-bold text-white">
+            <Theater className="h-5 w-5 text-amber-400" />
+            <span className="hidden sm:inline">The Grand Curtain</span>
           </div>
-        </a>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-sm uppercase tracking-widest text-white/70 hover:text-amber-400 transition-colors duration-300"
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#now-showing"
-            className="ml-4 rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-black hover:bg-amber-400 transition-colors duration-300"
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => handleNavClick(link.href)}
+                className={`text-sm font-medium transition-colors relative ${
+                  activeSection === link.href.replace("#", "")
+                    ? "text-amber-400"
+                    : "text-white/60 hover:text-white"
+                }`}
+                aria-current={activeSection === link.href.replace("#", "") ? "page" : undefined}
+              >
+                {link.label}
+                {activeSection === link.href.replace("#", "") && (
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-amber-400 rounded-full" />
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            onKeyDown={handleKeyDown}
+            className="md:hidden text-white/60 hover:text-white transition-colors p-2"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
           >
-            Book Tickets
-          </a>
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-white"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div
+            id="mobile-menu"
+            className="absolute top-full left-4 right-4 mt-2 rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl overflow-hidden"
+            role="navigation"
+            aria-label="Mobile navigation"
+          >
+            <div className="flex flex-col">
+              {navLinks.map((link, index) => (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href)}
+                  className={`px-6 py-3 text-sm font-medium text-left transition-colors ${
+                    index !== navLinks.length - 1 ? "border-b border-white/5" : ""
+                  } ${
+                    activeSection === link.href.replace("#", "")
+                      ? "bg-amber-500/10 text-amber-400"
+                      : "text-white/60 hover:text-white"
+                  }`}
+                  aria-current={activeSection === link.href.replace("#", "") ? "page" : undefined}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10 px-6 pb-6 pt-4 space-y-4">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="block text-sm uppercase tracking-widest text-white/70 hover:text-amber-400 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#now-showing"
-            className="block text-center rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-black"
-            onClick={() => setMobileOpen(false)}
-          >
-            Book Tickets
-          </a>
-        </div>
-      )}
     </nav>
   );
 }

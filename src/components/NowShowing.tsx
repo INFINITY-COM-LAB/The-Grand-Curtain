@@ -2,6 +2,7 @@ import { Calendar, Clock, Star } from "lucide-react";
 
 const shows = [
   {
+    id: "phantom-waltz",
     title: "The Phantom's Waltz",
     genre: "Musical Drama",
     image: "🎭",
@@ -14,6 +15,7 @@ const shows = [
     featured: true,
   },
   {
+    id: "midnight-paris",
     title: "Midnight in Paris",
     genre: "Romantic Comedy",
     image: "🌹",
@@ -26,6 +28,7 @@ const shows = [
     featured: false,
   },
   {
+    id: "last-emperor",
     title: "The Last Emperor",
     genre: "Historical Epic",
     image: "👑",
@@ -41,9 +44,9 @@ const shows = [
 
 export function NowShowing() {
   return (
-    <section id="now-showing" className="relative py-24 bg-[#0d0d0d]">
+    <section id="now-showing" className="relative py-24 bg-[#0d0d0d]" aria-labelledby="now-showing-title">
       {/* Ambient glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-red-900/5 rounded-full blur-[150px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-red-900/5 rounded-full blur-[150px] aria-hidden='true'" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         {/* Section Header */}
@@ -51,24 +54,26 @@ export function NowShowing() {
           <span className="text-xs uppercase tracking-[0.3em] text-amber-400 font-medium">
             On Stage Now
           </span>
-          <h2 className="mt-3 text-4xl sm:text-5xl font-bold text-white font-serif">
+          <h2 id="now-showing-title" className="mt-3 text-4xl sm:text-5xl font-bold text-white font-serif">
             Now Showing
           </h2>
-          <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+          <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent" aria-hidden="true" />
         </div>
 
         {/* Shows Grid */}
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-3" role="list">
           {shows.map((show) => (
-            <div
-              key={show.title}
+            <article
+              key={show.id}
               className="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 hover:border-amber-500/30 transition-all duration-500 hover:-translate-y-1"
+              role="listitem"
             >
               {/* Card top gradient area */}
               <div
                 className={`relative h-56 bg-gradient-to-br ${show.gradient} flex items-center justify-center`}
+                aria-hidden="true"
               >
-                <span className="text-7xl group-hover:scale-110 transition-transform duration-500">
+                <span className="text-7xl group-hover:scale-110 transition-transform duration-500 will-change-transform">
                   {show.image}
                 </span>
 
@@ -79,8 +84,8 @@ export function NowShowing() {
                 )}
 
                 <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-black/40 px-2.5 py-1 backdrop-blur-sm">
-                  <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
-                  <span className="text-xs text-white font-medium">
+                  <Star className="h-3 w-3 text-amber-400 fill-amber-400" aria-hidden="true" />
+                  <span className="text-xs text-white font-medium" aria-label={`Rating: ${show.rating} stars`}>
                     {show.rating}
                   </span>
                 </div>
@@ -103,20 +108,23 @@ export function NowShowing() {
 
                 <div className="flex items-center gap-4 text-white/40 text-sm">
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5" />
+                    <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{show.dates}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5" />
+                    <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{show.time}</span>
                   </div>
                 </div>
 
-                <button className="w-full rounded-full border border-amber-500/30 bg-amber-500/10 py-3 text-sm font-semibold uppercase tracking-wider text-amber-400 hover:bg-amber-500 hover:text-black transition-all duration-300">
+                <button 
+                  className="w-full rounded-full border border-amber-500/30 bg-amber-500/10 py-3 text-sm font-semibold uppercase tracking-wider text-amber-400 hover:bg-amber-500 hover:text-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-black"
+                  aria-label={`Get tickets for ${show.title}`}
+                >
                   Get Tickets
                 </button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
