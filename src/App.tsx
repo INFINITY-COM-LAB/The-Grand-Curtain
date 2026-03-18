@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { NowShowing } from "./components/NowShowing";
@@ -7,9 +7,15 @@ import { About } from "./components/About";
 import { Reviews } from "./components/Reviews";
 import { Newsletter } from "./components/Newsletter";
 import { Footer } from "./components/Footer";
+import { initializeSEO } from "./utils/seo";
 
 export function App() {
   const [showBanner, setShowBanner] = useState(true);
+
+  // Initialize SEO on mount
+  useEffect(() => {
+    initializeSEO();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white antialiased">
@@ -37,14 +43,16 @@ export function App() {
       {/* Push content down when banner is visible */}
       {showBanner && <div className="h-10 sm:h-10" />}
 
-      <Navbar />
-      <Hero />
-      <NowShowing />
-      <Upcoming />
-      <About />
-      <Reviews />
-      <Newsletter />
-      <Footer />
+      <main className="relative">
+        <Navbar />
+        <Hero />
+        <NowShowing />
+        <Upcoming />
+        <About />
+        <Reviews />
+        <Newsletter />
+        <Footer />
+      </main>
     </div>
   );
 }
