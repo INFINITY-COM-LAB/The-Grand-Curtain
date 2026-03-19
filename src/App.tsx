@@ -7,9 +7,12 @@ import { About } from "./components/About";
 import { Reviews } from "./components/Reviews";
 import { Newsletter } from "./components/Newsletter";
 import { Footer } from "./components/Footer";
+import { ToastContainer } from "./components/Toast";
+import { useToast } from "./hooks/useToast";
 
 export function App() {
   const [showBanner, setShowBanner] = useState(true);
+  const { toasts, dismiss } = useToast();
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white antialiased">
@@ -45,6 +48,9 @@ export function App() {
       <Reviews />
       <Newsletter />
       <Footer />
+
+      {/* Toast notification container */}
+      <ToastContainer toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }
