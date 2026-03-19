@@ -7,6 +7,7 @@ import { About } from "./components/About";
 import { Reviews } from "./components/Reviews";
 import { Newsletter } from "./components/Newsletter";
 import { Footer } from "./components/Footer";
+import { ScrollToTopButton } from "./components/ScrollToTopButton";
 
 export function App() {
   const [showBanner, setShowBanner] = useState(true);
@@ -45,6 +46,7 @@ export function App() {
       <Reviews />
       <Newsletter />
       <Footer />
+      <ScrollToTopButton />
     </div>
   );
 }
