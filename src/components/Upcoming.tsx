@@ -1,83 +1,88 @@
-import { ArrowRight, Calendar } from "lucide-react";
-
-const upcoming = [
-  {
-    title: "A Midsummer Night's Dream",
-    date: "June 2025",
-    emoji: "🧚",
-    genre: "Shakespeare",
-  },
-  {
-    title: "The Glass Menagerie",
-    date: "July 2025",
-    emoji: "🦋",
-    genre: "Classic Drama",
-  },
-  {
-    title: "Into the Woods",
-    date: "August 2025",
-    emoji: "🌲",
-    genre: "Musical",
-  },
-  {
-    title: "Death of a Salesman",
-    date: "September 2025",
-    emoji: "💼",
-    genre: "Tragedy",
-  },
-  {
-    title: "The Nutcracker: Reimagined",
-    date: "December 2025",
-    emoji: "❄️",
-    genre: "Ballet",
-  },
-];
+import { siteConfig } from "../data/siteConfig";
 
 export function Upcoming() {
+  const { upcoming } = siteConfig;
+
   return (
-    <section id="upcoming" className="relative py-24 bg-[#0a0a0a]">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0d0d] via-transparent to-[#0d0d0d]" />
+    <section
+      id="upcoming"
+      className="relative py-24 bg-black"
+      aria-labelledby="upcoming-title"
+    >
+      {/* Decorative elements */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-red-900/5 rounded-full blur-[150px]"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <span className="text-xs uppercase tracking-[0.3em] text-amber-400 font-medium">
+        {/* Header */}
+        <div className="mb-16">
+          <h2
+            id="upcoming-title"
+            className="text-4xl sm:text-5xl font-bold text-white font-serif"
+          >
             Coming Soon
-          </span>
-          <h2 className="mt-3 text-4xl sm:text-5xl font-bold text-white font-serif">
-            Upcoming Productions
           </h2>
-          <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+          <p className="text-white/50 mt-4">
+            Mark your calendar for our upcoming productions
+          </p>
         </div>
 
-        {/* Timeline */}
-        <div className="space-y-4 max-w-3xl mx-auto">
-          {upcoming.map((show, index) => (
+        {/* Shows Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {upcoming.map((show) => (
             <div
-              key={show.title}
-              className="group flex items-center gap-6 rounded-xl border border-white/5 bg-white/[0.02] px-6 py-5 hover:border-amber-500/20 hover:bg-white/[0.04] transition-all duration-300"
-              style={{ animationDelay: `${index * 100}ms` }}
+              key={show.id}
+              className="group relative rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/30 transition-colors"
             >
-              <div className="text-4xl">{show.emoji}</div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h3 className="text-lg font-semibold text-white font-serif group-hover:text-amber-400 transition-colors">
-                    {show.title}
-                  </h3>
-                  <span className="rounded-full border border-white/10 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-white/40">
-                    {show.genre}
-                  </span>
-                </div>
-                <div className="mt-1 flex items-center gap-1.5 text-white/40 text-sm">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <span>{show.date}</span>
-                </div>
+              {/* Image */}
+              <div className="relative overflow-hidden bg-[#1a1a1a] aspect-[16/10]">
+                <img
+                  src={show.image}
+                  alt={show.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
               </div>
 
-              <ArrowRight className="h-5 w-5 text-white/20 group-hover:text-amber-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+              {/* Content Overlay */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6">
+                <h3 className="text-2xl font-bold text-white mb-2">{show.title}</h3>
+                <p className="text-amber-400 text-lg font-semibold">{show.date}</p>
+
+                {/* Hover CTA */}
+                <button
+                  className="mt-4 rounded-full bg-amber-500 py-2.5 text-sm font-semibold text-black hover:bg-amber-400 transition-colors opacity-0 group-hover:opacity-100"
+                  aria-label={`Notify me about ${show.title}`}
+                >
+                  Notify Me
+                </button>
+              </div>
+
+              {/* "Coming Soon" badge */}
+              <div
+                className="absolute top-4 right-4 bg-amber-500 text-black px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider"
+                aria-label="Coming Soon"
+              >
+                Coming Soon
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Subscribe CTA */}
+        <div className="mt-16 text-center">
+          <p className="text-white/60 mb-6">
+            Want to be notified about these shows?
+          </p>
+          <a
+            href="#newsletter"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-10 py-4 text-base font-bold uppercase tracking-wider text-black hover:bg-amber-400 transition-colors"
+          >
+            Subscribe to Updates
+          </a>
         </div>
       </div>
     </section>
