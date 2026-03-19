@@ -15,10 +15,18 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      // Auto-close mobile menu on scroll
+      if (mobileOpen) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [mobileOpen]);
+
+  const closeMobileMenu = () => setMobileOpen(false);
 
   return (
     <nav
@@ -66,6 +74,8 @@ export function Navbar() {
         <button
           className="md:hidden text-white"
           onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={mobileOpen}
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -73,21 +83,25 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10 px-6 pb-6 pt-4 space-y-4">
+        <div
+          className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10 px-6 pb-6 pt-4 space-y-4 animate-in fade-in slide-in-from-top-4"
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
               className="block text-sm uppercase tracking-widest text-white/70 hover:text-amber-400 transition-colors"
-              onClick={() => setMobileOpen(false)}
+              onClick={closeMobileMenu}
             >
               {link.label}
             </a>
           ))}
           <a
             href="#now-showing"
-            className="block text-center rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-black"
-            onClick={() => setMobileOpen(false)}
+            className="block text-center rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-black hover:bg-amber-400 transition-colors"
+            onClick={closeMobileMenu}
           >
             Book Tickets
           </a>
