@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navbar } from "./components/Navbar";
+import { NavbarEnhanced } from "./components/NavbarEnhanced";
 import { Hero } from "./components/Hero";
 import { NowShowing } from "./components/NowShowing";
 import { Upcoming } from "./components/Upcoming";
@@ -38,7 +38,7 @@ export function App() {
       {/* Push content down when banner is visible */}
       {showBanner && <div className="h-10 sm:h-10" />}
 
-      <Navbar />
+      <NavbarEnhanced />
       <Hero />
       <NowShowing />
       <Upcoming />
