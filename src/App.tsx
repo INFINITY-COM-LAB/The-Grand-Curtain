@@ -8,14 +8,18 @@ import { About } from "./components/About";
 import { Reviews } from "./components/Reviews";
 import { Newsletter } from "./components/Newsletter";
 import { Footer } from "./components/Footer";
+import { OfflineIndicator } from "./components/OfflineIndicator";
+import { InstallPrompt } from "./components/InstallPrompt";
 import { errorTracker } from "@/utils/errorTracking";
+import { registerServiceWorker } from "@/utils/swRegistration";
 
 export function App() {
   const [showBanner, setShowBanner] = useState(true);
 
-  // Initialize error tracking on mount
+  // Initialize service worker and error tracking on mount
   useEffect(() => {
     errorTracker.init();
+    registerServiceWorker();
   }, []);
 
   return (
@@ -53,6 +57,12 @@ export function App() {
         <Reviews />
         <Newsletter />
         <Footer />
+
+        {/* Offline Status Indicator */}
+        <OfflineIndicator />
+
+        {/* PWA Install Prompt */}
+        <InstallPrompt />
       </div>
     </ErrorBoundary>
   );
