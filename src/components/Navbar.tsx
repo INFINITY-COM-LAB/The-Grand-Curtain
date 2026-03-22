@@ -1,98 +1,118 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Theater } from "lucide-react";
-import { cn } from "@/utils/cn";
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
+import type { Theme } from "../hooks/useTheme";
 
-const navLinks = [
-  { label: "Now Showing", href: "#now-showing" },
-  { label: "Upcoming", href: "#upcoming" },
-  { label: "About", href: "#about" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "Contact", href: "#contact" },
-];
+interface NavbarProps {
+  theme: Theme;
+  onThemeToggle: () => void;
+}
 
-export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+export function Navbar({ theme, onThemeToggle }: NavbarProps) {
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
+
+  const navItems = [
+    { label: "Now Showing", href: "#now-showing" },
+    { label: "Upcoming", href: "#upcoming" },
+    { label: "About", href: "#about" },
+    { label: "Reviews", href: "#reviews" },
+    { label: "Contact", href: "#contact" },
+  ];
 
   return (
     <nav
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-        scrolled
-          ? "bg-black/90 backdrop-blur-md shadow-lg shadow-black/30"
-          : "bg-transparent"
-      )}
+      className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-300 ${
+        theme === "dark"
+          ? "bg-[rgba(13,13,13,0.8)] border-b border-amber-500/20"
+          : "bg-white/80 border-b border-slate-200"
+      }`}
+      role="navigation"
+      aria-label="Main navigation"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <a href="#" className="flex items-center gap-3 group">
-          <Theater className="h-8 w-8 text-amber-400 group-hover:text-amber-300 transition-colors" />
-          <div className="flex flex-col">
-            <span className="text-xl font-bold tracking-wide text-white font-serif">
-              The Grand Curtain
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-amber-400/80">
-              Theatre & Arts
-            </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <a
+            href="#"
+            className={`text-2xl font-bold font-serif tracking-wider transition-colors ${
+              theme === "dark"
+                ? "text-amber-400 hover:text-amber-300"
+                : "text-amber-600 hover:text-amber-700"
+            }`}
+            aria-label="The Grand Curtain home"
+          >
+            🎭 The Grand Curtain
+          </a>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex gap-8 items-center">
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className={`transition-colors font-medium ${
+                  theme === "dark"
+                    ? "text-gray-300 hover:text-amber-400"
+                    : "text-slate-700 hover:text-amber-600"
+                }`}
+                onClick={closeMenu}
+              >
+                {item.label}
+              </a>
+            ))}
+            <ThemeToggle theme={theme} onToggle={onThemeToggle} />
           </div>
-        </a>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-sm uppercase tracking-widest text-white/70 hover:text-amber-400 transition-colors duration-300"
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle theme={theme} onToggle={onThemeToggle} />
+            <button
+              onClick={toggleMenu}
+              className={`p-2 rounded-lg transition-colors ${
+                theme === "dark"
+                  ? "hover:bg-amber-500/10 text-amber-400"
+                  : "hover:bg-amber-500/10 text-amber-600"
+              }`}
+              aria-label="Toggle menu"
+              aria-expanded={isOpen}
             >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#now-showing"
-            className="ml-4 rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-black hover:bg-amber-400 transition-colors duration-300"
-          >
-            Book Tickets
-          </a>
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-white"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className={`md:hidden pb-4 space-y-2 border-t ${
+            theme === "dark"
+              ? "border-amber-500/20"
+              : "border-slate-200"
+          }`}>
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className={`block px-3 py-2 rounded-lg transition-colors ${
+                  theme === "dark"
+                    ? "text-gray-300 hover:bg-amber-500/10 hover:text-amber-400"
+                    : "text-slate-700 hover:bg-amber-500/10 hover:text-amber-600"
+                }`}
+                onClick={closeMenu}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/10 px-6 pb-6 pt-4 space-y-4">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="block text-sm uppercase tracking-widest text-white/70 hover:text-amber-400 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#now-showing"
-            className="block text-center rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold uppercase tracking-wider text-black"
-            onClick={() => setMobileOpen(false)}
-          >
-            Book Tickets
-          </a>
-        </div>
-      )}
     </nav>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTheme } from "./hooks/useTheme";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { NowShowing } from "./components/NowShowing";
@@ -7,12 +8,14 @@ import { About } from "./components/About";
 import { Reviews } from "./components/Reviews";
 import { Newsletter } from "./components/Newsletter";
 import { Footer } from "./components/Footer";
+import "./styles/light-theme.css";
 
 export function App() {
   const [showBanner, setShowBanner] = useState(true);
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] text-white antialiased">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-slate-50'} text-${theme === 'dark' ? 'white' : '[#0d0d0d]'} antialiased transition-colors duration-300`}>
       {/* Sample Website Caution Banner */}
       {showBanner && (
         <div className="fixed top-0 left-0 right-0 z-[100] bg-amber-500 text-black">
@@ -37,7 +40,7 @@ export function App() {
       {/* Push content down when banner is visible */}
       {showBanner && <div className="h-10 sm:h-10" />}
 
-      <Navbar />
+      <Navbar theme={theme} onThemeToggle={toggleTheme} />
       <Hero />
       <NowShowing />
       <Upcoming />
